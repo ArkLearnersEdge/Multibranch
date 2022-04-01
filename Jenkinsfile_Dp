@@ -1,0 +1,44 @@
+pipeline
+{
+    agent any
+    stages
+    {
+        stage('ContinuousDownload')
+        {
+            steps
+            {
+                git 'https://github.com/ArkLearnersEdge/maven.git'
+            }
+        }
+        stage('ContinuousBuild')
+        {
+            steps
+            {
+                sh 'mvn package'
+            }
+        }
+        stage('ContinuousDeployment')
+        {
+            steps
+            {
+               sh 'scp /home/ubuntu/.jenkins/workspace/DeclarativePipeline/webapp/target/webapp.war ubuntu@172.31.10.108:/var/lib/tomcat8/webapps/testapp.war'
+            }
+        }
+        stage('ContinuousTesting')
+        {
+            steps
+            {
+               git 'https://github.com/ArkLearnersEdge/FunctionalTesting.git'
+               sh 'java -jar /home/ubuntu/.jenkins/workspace/DeclarativePipeline/testing.jar'
+               
+            }
+        }
+        stage('ContinuousDelivery')
+        {
+            steps
+            {
+               sh 'scp /home/ubuntu/.jenkins/workspace/DeclarativePipeline/webapp/target/webapp.war ubuntu@172.31.26.97:/var/lib/tomcat8/webapps/prod.war'
+            }
+        }
+    }
+}
