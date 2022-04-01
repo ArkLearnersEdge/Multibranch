@@ -1,9 +1,9 @@
 node('Dev') {
-    stage('ContinuousDownload_Loans') 
+    stage('ContinuousDownload_Master') 
     {
      git 'https://github.com/ArkLearnersEdge/maven.git'
     }
-    stage('ContinuousBuild_Loans') 
+    stage('ContinuousBuild_Master') 
     {
      sh 'mvn package'
    }
