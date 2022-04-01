@@ -3,93 +3,85 @@ pipeline
     agent any
     stages
     {
-        stage('C.Download')
+        stage('ContDownload')
         {
             steps
             {
-                script
-                {
-                 try
-                 {
-                    git 'https://github.com/ArkLearnersEdge/maven.git'
-                 }
-                 catch(Exception e1)
-                 {
-                      mail bcc: '', body: 'stage 1 failed to download url from git', cc: 'scrum_admingrp@gmailcom', from: '', replyTo: '', subject: 'failed to download', to: 'scrum_1@gmail.com' 
-                 }
-            
-                }
+				script
+				{
+					try
+					{
+						git 'https://github.com/ArkLearnersEdge/maven_demo.git'
+					}
+					catch(Exception e1)
+					{
+					mail bcc: '', body: 'in stage C-D Environment stage failure', cc: 'git_group@gmail.com', from: '', replyTo: '', subject: 'CI-CD Failure stage is ContDownload', to: 'gitadmin@gmail.com'
+					}
+				}
             }
         }
-        stage('C.Build')
+        stage('ContBuild')
         {
             steps
             {
-                script
-                {
-                 try
-                 {
-                    sh 'mvn package'
-                 }
-                 catch(Exception e2)
-                 {
-                      mail bcc: '', body: 'stage 2 failed to build at maven', cc: 'scrum_admingrp@gmailcom', from: '', replyTo: '', subject: 'failed to build', to: 'scrum_1@gmail.com'
-                 }
-            
-                }
+				script
+				{
+					try
+					{
+						sh 'mvn package'
+					}
+					catch(Exception e2)
+					{
+					 mail bcc: '', body: 'in stage C-Build stage failure', cc: 'mvn_group@gmail.com', from: '', replyTo: '', subject: 'CI-CD Failure stage is ContBuild', to: 'mvnadmin@gmail.com'
+					}
+				}
             }
         }
-        stage('C.Deploy')
+        stage('ContDeploy')
         {
             steps
             {
-                script
-                {
-                 try
-                 {
-                    sh 'scp /home/ubuntu/.jenkins/workspace/dec1/webapp/target/webapp.war ubuntu@172.31.85.205:/var/lib/tomcat8/webapps/testapps'
-                 }
-                 catch(Exception e3)
-                 {
-                     mail bcc: '', body: 'stage 3 failed to Deploy at testing tomcat8', cc: 'scrum_admingrp@gmailcom', from: '', replyTo: '', subject: 'failed to Deploy', to: 'scrum_1@gmail.com'
-                 }
-            
-                }
+				script
+				{
+					try
+					{
+						sh 'scp /home/ubuntu/.jenkins/workspace/Development/webapp/target/webapp.war ubuntu@172.31.80.108:/var/lib/tomcat8/webapps/testapp'
+					}
+					catch(Exception e3)
+					{
+						mail bcc: '', body: 'in stage C-Deploy stage is failure', cc: 'systemadmin_group@gmail.com', from: '', replyTo: '', subject: 'CI-CD Failure stage is ContDeploy', to: 'Systemadmin@gmail.com'
+					}
+				}
             }
         }
-        stage('C.Testing')
+        stage('ContTesting')
         {
-            steps
+			steps
             {
-                script
-                {
-                 try
-                 {
-                     git 'https://github.com/ArkLearnersEdge/FunctionalTesting.git'
-                     sh 'java -jar /home/ubuntu/.jenkins/workspace/dec1/testing.jar'
-                 }
-                 catch(Exception e4)
-                 {
-                     mail bcc: '', body: 'stage 3 failed to Testing copy url in git and testing tomcat8', cc: 'scrum_admingrp@gmailcom', from: '', replyTo: '', subject: 'failed to testing', to: 'scrum_1@gmail.com'
-                 }
-            
-                }
+				script
+				{
+					try
+					{
+						 git 'https://github.com/ArkLearnersEdge/FunctionalTesting.git'
+						 sh 'java -jar /home/ubuntu/.jenkins/workspace/Development/testing.jar'
+					}
+					catch(Exception e4)
+					{
+						mail bcc: '', body: 'in stage C-Deploy stage is failure', cc: 'systemadmin_group@gmail.com', from: '', replyTo: '', subject: 'CI-CD Failure stage is ContDeploy', to: 'Systemadmin@gmail.com'
+					}
+				}
             }
         }
 	}
-		
 	post
-    {
-        success
-       
-        {
-            sh 'scp /home/ubuntu/.jenkins/workspace/dec1/webapp/target/webapp.war ubuntu@172.31.88.159:/var/lib/tomcat8/webapps/prodapps'
-        }
-        failure
-        {
-           mail bcc: '', body: 'stage 5 failed to delivery ', cc: 'scrum_admingrp@gmailcom', from: '', replyTo: '', subject: 'failed to delivery in production', to: 'scrum_1@gmail.com'
-        }
-            
-           
-    }
+	{
+		success
+		{
+			sh 'scp /home/ubuntu/.jenkins/workspace/Development/webapp/target/webapp.war ubuntu@172.31.80.178:/var/lib/tomcat8/webapps/prodapp'
+		}
+		failure
+		{
+			mail bcc: '', body: 'in prod Environment stage failure', cc: 'arklearnersedge@gmail.com', from: '', replyTo: '', subject: 'CI-CD Failure Production Environment', to: 'arklearnersedge@gmail.com'
+		}
+	}
 }
